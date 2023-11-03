@@ -3,24 +3,30 @@ library(ragg)
 library(ggplot2)
 library(ggrepel)
 library(tibble)
-
-
-
+library(here)
 
 # Constants -----------------------------------------------------------------------------------
 
 yellow <- "#fcd500"
+date <- Sys.Date()
+
 path_image <- here::here(
   "images",
   paste0(
-    Sys.Date(),
+    date,
     "_kokusai_dojos.png"
   )
 )
 
+caption <- paste0(
+  "This version: ",
+  date,
+  "\nSource: https://github.com/RichardMeyer-Eppler/kokusai-dojos"
+)
+
 # Data sources --------------------------------------------------------------------------------
 
-tibble::tribble(
+df_dojos <- tibble::tribble(
   ~row_number,                  ~Dojo,        ~lon,        ~lat,
   1L,           "Muso-juku Asahikawa", 142.3649743,   43.770625,
   2L,            "Gensei-kan Sapporo", 141.3542924,   43.061936,
@@ -67,8 +73,8 @@ mapWorld <- rnaturalearth::ne_countries(
 
 ragg::agg_png(
   path_image, 
-  width = 500 * 5,
-  height = 295.8 * 5, 
+  width = 2500,
+  height = 1498, 
   res = 72,
   scaling = 4
 )
@@ -103,13 +109,13 @@ ggplot2::ggplot(
   ) +
   ggplot2::scale_color_manual(
     name = NULL,
-    values = rep(yellow, nrow(df_dojos_sf)),
-    labels = rev(df_dojos_sf$Dojo)
+    values = rep(yellow, nrow(df_dojos)),
+    labels = rev(df_dojos$Dojo)
   ) +
   ggplot2::guides(
     color = ggplot2::guide_legend(
       override.aes = list(
-        label = rev(df_dojos_sf$row_number),
+        label = rev(df_dojos$row_number),
         size = ggplot2::rel(
           2.8
         )
@@ -118,8 +124,8 @@ ggplot2::ggplot(
   ) +
   ggplot2::labs(
     title = "一般社団法人 正統正流無雙直傳英信流居合道国際連盟",
-    subtitle = "World MJER Iaido Federation — Seito Seiryu Muso Jikiden Eishin Ryu Iaido Kokusai Renmei",
-    caption = "Source: "
+    subtitle = "World MJER Iaido Federation – Seito Seiryu Muso Jikiden Eishin Ryu Iaido Kokusai Renmei",
+    caption = caption
   ) +
   ggplot2::theme_void() +
   ggplot2::theme(
@@ -145,6 +151,12 @@ ggplot2::ggplot(
     ,legend.spacing.x = ggplot2::unit(
       0.2,
       "lines"
+    ),
+    plot.caption = ggplot2::element_text(
+      size = ggplot2::rel(
+        0.6
+      ),
+      face = "italic"
     )
   )
 
