@@ -1,0 +1,74 @@
+---
+output: github_document
+---
+
+```{r, include = FALSE}
+# CAUTION: New map file needs to be pushed to Github before knitting this file!
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = FALSE
+)
+
+library(httr)
+library(purrr)
+
+```
+
+```{r get-latest-map}
+# https://stackoverflow.com/questions/70938808/r-rvest-retrieve-files-from-github
+
+req <- httr::GET(
+  paste0(
+    "https://api.github.com/repos/", 
+    "RichardMeyer-Eppler/kokusai-dojos/contents/images"
+  )
+)
+
+file_list <- httr::content(req)
+
+df_images <- tibble::tibble(
+  file = purrr::map_chr(
+    file_list,
+    ~ .x$name
+  ),
+  link = purrr::map_chr(
+    file_list,
+    ~ .x$download_url
+  )
+) |> 
+  dplyr::arrange(
+    dplyr::desc(
+      file
+    )
+  )
+
+image_link <- dplyr::pull(
+  df_images,
+  link
+)[1]
+
+```
+
+## Iaido dojos of the World MJER Federation
+
+<!-- badges: start -->
+
+<!-- badges: end -->
+
+This repository contains the R code to plot all Iaido dojos of the [World MJER Federation](https://mjer-iaido.github.io/en/) (一般社団法人　正統正流無雙直傳英信流居合道国際連盟).
+The federation's official dojo list is available here: <https://mjer-iaido.github.io/en/dojos/>
+
+## Dojo map
+
+```{r}
+# CAUTION: New map file needs to be pushed to Github before knitting this file!
+knitr::include_graphics(
+  path = image_link
+)
+```
+
+## Contact
+
+Please contact [info\@iaido-dortmund.de](mailto:info@iaido-dortmund.de) for any errors or omissions.
