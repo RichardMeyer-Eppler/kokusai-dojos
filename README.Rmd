@@ -3,6 +3,8 @@ output: github_document
 ---
 
 ```{r, include = FALSE}
+# https://stackoverflow.com/questions/59775941/rstudio-readme-rmd-and-readme-md-should-be-both-staged-use-git-commit-no-veri
+
 # CAUTION: New map file needs to be pushed to Github before knitting this file!
 
 knitr::opts_chunk$set(
